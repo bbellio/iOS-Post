@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PostListViewController: UIViewController, UITableViewDelegate {
+class PostListViewController: UIViewController {
     
     let postController = PostController()
     let refreshControl = UIRefreshControl()
@@ -31,6 +31,11 @@ class PostListViewController: UIViewController, UITableViewDelegate {
             self.reloadTableView()
         }
     }
+    // MARK: - Actions
+    
+    @IBAction func addButtonTapped(_ sender: Any) {
+        presentNewPostAlert()
+    }
     
     // MARK: - Functions
     @objc func refreshControlPulled() {
@@ -47,9 +52,36 @@ class PostListViewController: UIViewController, UITableViewDelegate {
             self.tableView.reloadData()
         }
     }
+    
+    func presentNewPostAlert() {
+        let alert = UIAlertController(title: "New Post", message: "Type Your Post Here", preferredStyle: .alert)
+        alert.addTextField { (textField) in
+            textField.placeholder = "Username"
+        }
+        alert.addTextField { (textField) in
+            textField.placeholder = "Post your message here..."
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .destructive, handler: nil)
+        let postAction = UIAlertAction(title: "Post", style: .default) { (_) in
+            guard let username = alert.textFields?[0].text, !username.isEmpty,
+                let text = alert.textFields?[1].text, !text.isEmpty
+                else {
+                    self.present(alert, animated: true)
+                    return
+            }
+            self.postController.addNewPostWith(username: username, text: text) {
+                self.reloadTableView()
+            }
+        }
+        alert.addAction(cancelAction)
+        alert.addAction(postAction)
+        present(alert, animated: true)
+    }
 }
 
-    // MARK: - Extension: Table View Data Source
+// MARK: - Class Extensions
+
+//Table View Data Source
 extension PostListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -65,6 +97,15 @@ extension PostListViewController: UITableViewDataSource {
         cell.textLabel?.text = post.text
         cell.detailTextLabel?.text = "\(dateString)\nBy \(post.username)"
         return cell
-        
     }
+}
+
+// Table View Delegate
+extension PostListViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard indexPath.row >= postController.posts.count - 1 else { return }
+        postController.fetchPosts(reset: false) {
+            self.reloadTableView()
+        }
+    } 
 }

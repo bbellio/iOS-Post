@@ -7,7 +7,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--My Posts-->
+        <!--Posts-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="PostListViewController" customModule="Post" customModuleProvider="target" sceneMemberID="viewController">
@@ -55,7 +55,13 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
-                    <navigationItem key="navigationItem" title="My Posts" id="3fc-2P-1zw"/>
+                    <navigationItem key="navigationItem" title="Posts" id="3fc-2P-1zw">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="W8A-4X-f6H">
+                            <connections>
+                                <action selector="addButtonTapped:" destination="BYZ-38-t0r" id="VLz-o2-gAV"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="uTZ-94-9Xz" id="SWa-bS-r7P"/>
                     </connections>
